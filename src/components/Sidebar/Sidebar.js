@@ -87,7 +87,7 @@ export default function Sidebar(props) {
         color: 'white',
         paddingLeft: '20px'
       }}>
-      Vehicle Security System</p>
+      Vehicle Tracking System</p>
     </div>
   );
   return (

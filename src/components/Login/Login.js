@@ -3,7 +3,7 @@ import "./Login.css";
 import icon from "./../../assets/images/as.png";
 import background from "./../../assets/images/n.jpg";
 import axios from "axios";
-import { Redirect, Route } from "react-router-dom";
+import { Link, Redirect, Route } from "react-router-dom";
 import { exact } from "prop-types";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
@@ -14,35 +14,37 @@ export default class Login extends Component {
     password: null,
     loading: false,
   };
-  onSubmitHandler = (e) => {
+  onSubmitHandler = async (e) => {
     this.setState({
       loading: true,
     });
-    setTimeout(() => {
-      this.setState({
-        loading: false,
-      });
-    }, 100000);
     e.preventDefault();
 
-    let opts = {
-      username: this.state.username,
+    let _data = {
+      user_name: this.state.username,
       password: this.state.password,
     };
-    console.log(opts);
-    fetch("http://127.0.0.1:5000/login", {
-      method: "post",
-      body: JSON.stringify(opts),
-    }).then((r) => console.log(r));
-    setTimeout(() => {
-      this.props.history.push("/admin");
-    }, 1000);
-
-    // const form = new FormData();x
-    // form.append("username", this.state.usrename);
-    // form.append("password", this.state.password);
-
-    // axios.post('http://localhost:5000/login/', form).then(res => console.log(res))
+    try {
+      let response = await fetch("http://127.0.0.1:5000/login/", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(_data),
+      });
+      if (response.status === 200) {
+        let data = await response.json();
+        if(data.status == 200) {
+          this.props.history.push("/admin/dashboard");
+        } else {
+          this.setState({loading : false});
+          alert('Invalid Credentials!!! Please try again!');
+        }
+      } else {
+        let data = await response.json();
+        throw data;
+      }
+    } catch (e) {
+      throw e;
+    }
   };
   render() {
     let loader = (
@@ -61,7 +63,7 @@ export default class Login extends Component {
         {this.state.loading ? (
           loader
         ) : (
-          <div id="box">
+          <div id="login-box">
             <img src={icon} alt="Login Icon" />
             <h1>Login Here</h1>
             <form method="POST">
@@ -94,6 +96,9 @@ export default class Login extends Component {
               />
               <br />
               <br />
+              <Link to="/signup" style={{ color: "white" }}>
+                Click to Register!!!
+              </Link>
             </form>
           </div>
         )}
