@@ -46,6 +46,7 @@ export default function AdminNavbarLinks() {
   };
   const handleCloseProfile = () => {
     setOpenProfile(null);
+    
   };
   return (
     <div>
@@ -193,7 +194,7 @@ export default function AdminNavbarLinks() {
               <Paper>
                 <ClickAwayListener onClickAway={handleCloseProfile}>
                   <MenuList role="menu">
-                    <MenuItem
+                    {/* <MenuItem
                       onClick={handleCloseProfile}
                       className={classes.dropdownItem}
                     >
@@ -205,7 +206,7 @@ export default function AdminNavbarLinks() {
                     >
                       Settings
                     </MenuItem>
-                    <Divider light />
+                    <Divider light /> */}
                     <MenuItem
                       onClick={handleCloseProfile}
                       className={classes.dropdownItem}

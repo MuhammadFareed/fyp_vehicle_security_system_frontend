@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // react plugin for creating charts
 import ChartistGraph from "react-chartist";
 // @material-ui/core
@@ -28,7 +28,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-
+import { Link } from "react-router-dom";
 import { bugs, website, server } from "variables/general.js";
 // images
 import car1 from "./../../assets/images/car1.jpg";
@@ -38,11 +38,53 @@ import {
 } from "variables/charts.js";
 
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
+import { GetService } from "./../../services/GeneralServices";
+import { withStyles } from "@material-ui/core/styles";
+import { green } from "@material-ui/core/colors";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import Favorite from "@material-ui/icons/Favorite";
+import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
 const useStyles = makeStyles(styles);
 
 export default function Dashboard() {
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [data, setData] = useState(null);
   const classes = useStyles();
+  console.log(`selectedValue`, selectedValue);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await GetService("vehicles/search");
+      console.log(response.data);
+      setData(response.data);
+    };
+    fetchData();
+  }, []);
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+
+  useEffect(() => {
+    const fetchMoreData = async () => {
+      const response = await GetService("vehicles/search?state="+selectedValue);
+      console.log(response.data);
+      debugger
+      setData(response.data);
+    };
+    if(selectedValue) {
+      fetchMoreData();
+    }
+  }, [selectedValue])
+
   return (
     <div>
       <p>Today:</p>
@@ -54,19 +96,10 @@ export default function Dashboard() {
                 <Icon>content_copy</Icon>
               </CardIcon>
               <p className={classes.cardCategory}>Total Vehicles</p>
-              <h3 className={classes.cardTitle}>
-                49
-              </h3>
+              <h3 className={classes.cardTitle}>49</h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
-                {/* <Danger>
-                  <Warning />
-                </Danger>
-                <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                  Get more space
-                </a> */}
-              </div>
+              <div className={classes.stats}></div>
             </CardFooter>
           </Card>
         </GridItem>
@@ -80,10 +113,7 @@ export default function Dashboard() {
               <h3 className={classes.cardTitle}>40</h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
-                {/* <DateRange />
-                Last 24 Hours */}
-              </div>
+              <div className={classes.stats}></div>
             </CardFooter>
           </Card>
         </GridItem>
@@ -97,10 +127,7 @@ export default function Dashboard() {
               <h3 className={classes.cardTitle}>9</h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
-                {/* <LocalOffer />
-                Tracked from Github */}
-              </div>
+              <div className={classes.stats}></div>
             </CardFooter>
           </Card>
         </GridItem>
@@ -114,10 +141,7 @@ export default function Dashboard() {
               <h3 className={classes.cardTitle}>8</h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
-                {/* <Update />
-                Just Updated */}
-              </div>
+              <div className={classes.stats}></div>
             </CardFooter>
           </Card>
         </GridItem>
@@ -131,10 +155,7 @@ export default function Dashboard() {
               <h3 className={classes.cardTitle}>1</h3>
             </CardHeader>
             <CardFooter stats>
-              <div className={classes.stats}>
-                {/* <LocalOffer />
-                Tracked from Github */}
-              </div>
+              <div className={classes.stats}></div>
             </CardFooter>
           </Card>
         </GridItem>
@@ -144,29 +165,6 @@ export default function Dashboard() {
         <GridItem xs={12} sm={12} md={4}>
           <Card chart>
             <img src={car1} />
-            {/* <CardHeader color="success">
-              <ChartistGraph
-                className="ct-chart"
-                data={dailySalesChart.data}
-                type="Line"
-                options={dailySalesChart.options}
-                listener={dailySalesChart.animation}
-              />
-            </CardHeader> */}
-            {/* <CardBody>
-              <h4 className={classes.cardTitle}>Daily Sales</h4>
-              <p className={classes.cardCategory}>
-                <span className={classes.successText}>
-                  <ArrowUpward className={classes.upArrowCardCategory} /> 55%
-                </span>{" "}
-                increase in today sales.
-              </p>
-            </CardBody>
-            <CardFooter chart>
-              <div className={classes.stats}>
-                <AccessTime /> updated 4 minutes ago
-              </div>
-            </CardFooter> */}
           </Card>
         </GridItem>
         <GridItem xs={12} sm={12} md={4}>
@@ -180,9 +178,15 @@ export default function Dashboard() {
               Vehilce Number Plate / CPLC Result:
             </p>
             <ul>
-              <li>Number : <strong>IK33PIT</strong></li>
-              <li>Cleared : <strong>Yes</strong></li>
-              <li>Time : <strong>5-June, 2021 08:00 AM</strong></li>
+              <li>
+                Number : <strong>IK33PIT</strong>
+              </li>
+              <li>
+                Cleared : <strong>Yes</strong>
+              </li>
+              <li>
+                Time : <strong>5-June, 2021 08:00 AM</strong>
+              </li>
             </ul>
           </Card>
         </GridItem>
@@ -197,9 +201,15 @@ export default function Dashboard() {
               Vehilce Number Plate / CPLC Result:
             </p>
             <ul>
-              <li>No of Check In : <strong>7</strong></li>
-              <li>No of Check Out : <strong>6</strong></li>
-              <li>Red Alert : <strong>1</strong></li>
+              <li>
+                No of Check In : <strong>7</strong>
+              </li>
+              <li>
+                No of Check Out : <strong>6</strong>
+              </li>
+              <li>
+                Red Alert : <strong>1</strong>
+              </li>
             </ul>
           </Card>
         </GridItem>
@@ -247,31 +257,101 @@ export default function Dashboard() {
           />
         </GridItem>
          */}
+        {data && data.length > 0 && (
+          <GridItem xs={24} sm={24} md={24}>
+            <Card>
+              <CardHeader color="primary">
+                <div style={{ display: "flex" }}>
+                  <h4 className={classes.cardTitleWhite}>All Vehicles</h4>
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: "0px",
+                      marginTop: "-5px",
+                    }}
+                  >
+                    <FormGroup row>
+                      <RadioGroup
+                        row
+                        aria-label="position"
+                        name="position"
+                        defaultValue="top"
+                        onChange={(e) => setSelectedValue(e.target.value)}
+                      >
+                        <FormControlLabel
+                          value="red_alert"
+                          control={<Radio color="primary" />}
+                          label="Red-Alert"
+                        />
+                        <FormControlLabel
+                          value="passed"
+                          control={<Radio color="primary" />}
+                          label="Passed"
+                        />
+                        <FormControlLabel
+                          value="rejected"
+                          control={<Radio color="primary" />}
+                          label="Rejected"
+                        />
+                        <FormControlLabel
+                          value="check_in"
+                          control={<Radio color="primary" />}
+                          label="Check-In"
+                        />
+                        <FormControlLabel
+                          value="check_out"
+                          control={<Radio color="primary" />}
+                          label="Check-Out"
+                        />
+                      </RadioGroup>
+                    </FormGroup>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <div style={{ maxHeight: "450px", overflowY: "scroll" }}>
+                <CardBody>
+                  <Table
+                    tableHeaderColor="primary"
+                    tableHead={[
+                      "ID",
+                      "Vehicle Number",
+                      "Pass/Rejected",
+                      "Image Url",
+                      "Date",
+                      "Check In/Out",
+                      "Red Alert",
+                      "Message",
+                      "Enter by",
+                    ]}
+                    tableData={data.map((item) => {
+                      return [
+                        item.id,
+                        item.number_plate,
+                        item.is_passed_or_rejected ? "Yes" : "No",
+                        <>
+                          <a target="_blank" href={item.image}>
+                            {item.image}
+                          </a>
+                        </>,
+                        item.date,
+                        item.check_in_out[0].toUpperCase() +
+                          item.check_in_out.slice(1),
+                        item.red_alert ? "Yes" : "No",
+                        item.other_message,
+                        item.entry_by,
+                      ];
+                    })}
+                  />
+                </CardBody>
+              </div>
+            </Card>
+          </GridItem>
+        )}
+
         <GridItem xs={12} sm={12} md={6}>
           <Card>
-            <CardHeader color="warning">
-              <h4 className={classes.cardTitleWhite}>All Vehicles</h4>
-              <p className={classes.cardCategoryWhite}>
-                New employees on 15th September, 2016
-              </p>
-            </CardHeader>
-            <CardBody>
-              <Table
-                tableHeaderColor="warning"
-                tableHead={["ID", "Name", "Salary", "Country"]}
-                tableData={[
-                  ["1", "Dakota Rice", "$36,738", "Niger"],
-                  ["2", "Minerva Hooper", "$23,789", "Curaçao"],
-                  ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
-                  ["4", "Philip Chaney", "$38,735", "Korea, South"],
-                ]}
-              />
-            </CardBody>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={6}>
-          <Card>
-            <CardHeader color="warning">
+            <CardHeader color="success">
               <h4 className={classes.cardTitleWhite}>Accepted Vehicles</h4>
               <p className={classes.cardCategoryWhite}>
                 New employees on 15th September, 2016
@@ -279,7 +359,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardBody>
               <Table
-                tableHeaderColor="warning"
+                tableHeaderColor="success"
                 tableHead={["ID", "Name", "Salary", "Country"]}
                 tableData={[
                   ["1", "Dakota Rice", "$36,738", "Niger"],
