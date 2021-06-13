@@ -20,10 +20,12 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
+import { logOutUser } from "./../../store/actions/AuthActions/asyncActions";
+import { withRouter } from "react-router";
 
 const useStyles = makeStyles(styles);
 
-export default function AdminNavbarLinks() {
+function AdminNavbarLinks(props) {
   const classes = useStyles();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
@@ -50,7 +52,7 @@ export default function AdminNavbarLinks() {
   };
   return (
     <div>
-      <div className={classes.searchWrapper}>
+      {/* <div className={classes.searchWrapper}>
         <CustomInput
           formControlProps={{
             className: classes.margin + " " + classes.search
@@ -156,6 +158,7 @@ export default function AdminNavbarLinks() {
           )}
         </Poppers>
       </div>
+       */}
       <div className={classes.manager}>
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
@@ -208,10 +211,10 @@ export default function AdminNavbarLinks() {
                     </MenuItem>
                     <Divider light /> */}
                     <MenuItem
-                      onClick={handleCloseProfile}
+                      onClick={() => logOutUser(props.history)}
                       className={classes.dropdownItem}
                     >
-                      Logout
+                      Log Out
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
@@ -223,3 +226,5 @@ export default function AdminNavbarLinks() {
     </div>
   );
 }
+
+export default withRouter(AdminNavbarLinks);

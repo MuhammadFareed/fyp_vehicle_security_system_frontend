@@ -56,344 +56,338 @@ import FormLabel from "@material-ui/core/FormLabel";
 const useStyles = makeStyles(styles);
 
 export default function Dashboard() {
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedValue, setSelectedValue] = useState('all');
+  const [newVehicle, setNewVehicle] = useState(null);
   const [data, setData] = useState(null);
+  const [allData, setAllData] = useState(null);
+  const [passed, setPassed] = useState(null);
+  const [rejected, setRejected] = useState(null);
+  const [redAlert, setRedAlert] = useState(null);
+  const [checkIn, setCheckIn] = useState(null);
+  const [checkOut, setCheckOut] = useState(null);
   const classes = useStyles();
-  console.log(`selectedValue`, selectedValue);
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await GetService("vehicles/search");
-      console.log(response.data);
       setData(response.data);
+      setAllData(response.data);
+      const response2 = await GetService("vehicles/search?status=passed");
+      setPassed(response2.data);
+      const response3 = await GetService("vehicles/search?status=rejected");
+      setRejected(response3.data);
+      const response4 = await GetService("vehicles/search?red_alert=true");
+      setRedAlert(response4.data);
+      const response5 = await GetService("vehicles/search?in_out=in");
+      setCheckIn(response5.data);
+      const response6 = await GetService("vehicles/search?in_out=out");
+      setCheckOut(response6.data);
     };
     fetchData();
   }, []);
 
-  const handleChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
-
   useEffect(() => {
-    const fetchMoreData = async () => {
-      const response = await GetService("vehicles/search?state="+selectedValue);
-      console.log(response.data);
-      debugger
-      setData(response.data);
-    };
-    if(selectedValue) {
-      fetchMoreData();
+    if(selectedValue==='red_alert') {
+      setData(redAlert);
+    } else if(selectedValue==='passed') {
+      setData(passed);
+    } else if(selectedValue==='rejected') {
+      setData(rejected);
+    } else if(selectedValue==='all') {
+      setData(allData);
+    } else if(selectedValue==='check_in') {
+      setData(checkIn);
+    } else if(selectedValue==='check_out') {
+      setData(checkOut);
     }
   }, [selectedValue])
 
   return (
-    <div>
-      <p>Today:</p>
-      <GridContainer>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="warning" stats icon>
-              <CardIcon color="warning">
-                <Icon>content_copy</Icon>
-              </CardIcon>
-              <p className={classes.cardCategory}>Total Vehicles</p>
-              <h3 className={classes.cardTitle}>49</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}></div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="success" stats icon>
-              <CardIcon color="success">
-                <Store />
-              </CardIcon>
-              <p className={classes.cardCategory}>Vehicles Passed</p>
-              <h3 className={classes.cardTitle}>40</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}></div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="danger" stats icon>
-              <CardIcon color="danger">
-                <Icon>info_outline</Icon>
-              </CardIcon>
-              <p className={classes.cardCategory}>Vehicles Rejected</p>
-              <h3 className={classes.cardTitle}>9</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}></div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-                <Accessibility />
-              </CardIcon>
-              <p className={classes.cardCategory}>New Vehicles</p>
-              <h3 className={classes.cardTitle}>8</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}></div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="danger" stats icon>
-              <CardIcon color="danger">
-                <Icon>info_outline</Icon>
-              </CardIcon>
-              <p className={classes.cardCategory}>Red Alert</p>
-              <h3 className={classes.cardTitle}>1</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}></div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-      </GridContainer>
-      <p>Current Vehicle:</p>
-      <GridContainer>
-        <GridItem xs={12} sm={12} md={4}>
-          <Card chart>
-            <img src={car1} />
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={4}>
-          <Card chart>
-            <p
-              className="p-2"
-              style={{
-                padding: "5px 9px",
-              }}
-            >
-              Vehilce Number Plate / CPLC Result:
-            </p>
-            <ul>
-              <li>
-                Number : <strong>IK33PIT</strong>
-              </li>
-              <li>
-                Cleared : <strong>Yes</strong>
-              </li>
-              <li>
-                Time : <strong>5-June, 2021 08:00 AM</strong>
-              </li>
-            </ul>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={4}>
-          <Card chart>
-            <p
-              className="p-2"
-              style={{
-                padding: "5px 9px",
-              }}
-            >
-              Vehilce Number Plate / CPLC Result:
-            </p>
-            <ul>
-              <li>
-                No of Check In : <strong>7</strong>
-              </li>
-              <li>
-                No of Check Out : <strong>6</strong>
-              </li>
-              <li>
-                Red Alert : <strong>1</strong>
-              </li>
-            </ul>
-          </Card>
-        </GridItem>
-      </GridContainer>
-      <GridContainer>
-        {/* <GridItem xs={12} sm={12} md={6}>
-          <CustomTabs
-            title="Tasks:"
-            headerColor="primary"
-            tabs={[
-              {
-                tabName: "Bugs",
-                tabIcon: BugReport,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[0, 3]}
-                    tasksIndexes={[0, 1, 2, 3]}
-                    tasks={bugs}
-                  />
-                ),
-              },
-              {
-                tabName: "Website",
-                tabIcon: Code,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[0]}
-                    tasksIndexes={[0, 1]}
-                    tasks={website}
-                  />
-                ),
-              },
-              {
-                tabName: "Server",
-                tabIcon: Cloud,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[1]}
-                    tasksIndexes={[0, 1, 2]}
-                    tasks={server}
-                  />
-                ),
-              },
-            ]}
-          />
-        </GridItem>
-         */}
-        {data && data.length > 0 && (
-          <GridItem xs={24} sm={24} md={24}>
-            <Card>
-              <CardHeader color="primary">
-                <div style={{ display: "flex" }}>
-                  <h4 className={classes.cardTitleWhite}>All Vehicles</h4>
-                  <div
-                    style={{
-                      position: "absolute",
-                      right: "0px",
-                      marginTop: "-5px",
-                    }}
-                  >
-                    <FormGroup row>
-                      <RadioGroup
-                        row
-                        aria-label="position"
-                        name="position"
-                        defaultValue="top"
-                        onChange={(e) => setSelectedValue(e.target.value)}
+    <>
+      {data && data.length > 0 && (
+        <div>
+          <GridContainer>
+            <GridItem xs={12} sm={6} md={3}>
+              <Card>
+                <CardHeader color="warning" stats icon>
+                  <CardIcon color="warning">
+                    <Icon>content_copy</Icon>
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Total Vehicles</p>
+                  <h3 className={classes.cardTitle}>{data.length}</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div className={classes.stats}></div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={3}>
+              <Card>
+                <CardHeader color="success" stats icon>
+                  <CardIcon color="success">
+                    <Store />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Vehicles Passed</p>
+                  <h3 className={classes.cardTitle}>{passed && passed.length}</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div className={classes.stats}></div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={3}>
+              <Card>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
+                    <Icon>info_outline</Icon>
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Vehicles Rejected</p>
+                  <h3 className={classes.cardTitle}>{rejected && rejected.length}</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div className={classes.stats}></div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={3}>
+              <Card>
+                <CardHeader color="info" stats icon>
+                  <CardIcon color="info">
+                    <Accessibility />
+                  </CardIcon>
+                  <p className={classes.cardCategory}>New Vehicles</p>
+                  <h3 className={classes.cardTitle}>1</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div className={classes.stats}></div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={6} md={3}>
+              <Card>
+                <CardHeader color="danger" stats icon>
+                  <CardIcon color="danger">
+                    <Icon>info_outline</Icon>
+                  </CardIcon>
+                  <p className={classes.cardCategory}>Red Alert</p>
+                  <h3 className={classes.cardTitle}>{redAlert && redAlert.length}</h3>
+                </CardHeader>
+                <CardFooter stats>
+                  <div className={classes.stats}></div>
+                </CardFooter>
+              </Card>
+            </GridItem>
+          </GridContainer>
+          { newVehicle && (
+            <>
+            <h2>Current Vehicle:</h2>
+            <GridContainer>
+            <GridItem xs={12} sm={12} md={4}>
+              <Card chart>
+                <img src={newVehicle.image} />
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={4}>
+              <Card chart>
+                <h5
+                  className="p-2"
+                  style={{
+                    padding: "5px 9px",
+                  }}
+                >
+                  Vehilce Info :
+                </h5>
+                <ul>
+                  <li>
+                    Vehicle Number : <strong>{newVehicle.number_plate}</strong>
+                  </li>
+                  <li>
+                    Check In / Out : <strong>{newVehicle.check_in_out}</strong>
+                  </li>
+                  <li>
+                    Cleared : <strong>{newVehicle.is_passed_or_rejected ? 'Yes' : 'No'}</strong>
+                  </li>
+                  <li>
+                    Time : <strong>{newVehicle.in_out_datetime}</strong>
+                  </li>
+                </ul>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={4}>
+              <Card chart>
+                <h5
+                  className="p-2"
+                  style={{
+                    padding: "5px 9px",
+                  }}
+                >
+                  Historical Analysis:
+                </h5>
+                <ul>
+                  <li>
+                    No of Check In : <strong>{newVehicle.len_checkin}</strong>
+                  </li>
+                  <li>
+                    No of Check Out : <strong>{newVehicle.len_checkout}</strong>
+                  </li>
+                  <li>
+                    Red Alert : <strong>{newVehicle.len_redalert}</strong>
+                  </li>
+                  <li>
+                    Message : <strong>{newVehicle.other_message}</strong>
+                  </li>
+                </ul>
+              </Card>
+            </GridItem>
+          </GridContainer>
+          </>
+          )}
+          <GridContainer>
+            {data && data.length > 0 && (
+              <GridItem xs={24} sm={24} md={24}>
+                <Card>
+                  <CardHeader color="success">
+                    <div style={{ display: "flex" }}>
+                      <h4 className={classes.cardTitleWhite}>All Vehicles</h4>
+                      <div
+                        style={{
+                          position: "absolute",
+                          right: "0px",
+                          marginTop: "-5px",
+                        }}
                       >
-                        <FormControlLabel
-                          value="red_alert"
-                          control={<Radio color="primary" />}
-                          label="Red-Alert"
-                        />
-                        <FormControlLabel
-                          value="passed"
-                          control={<Radio color="primary" />}
-                          label="Passed"
-                        />
-                        <FormControlLabel
-                          value="rejected"
-                          control={<Radio color="primary" />}
-                          label="Rejected"
-                        />
-                        <FormControlLabel
-                          value="check_in"
-                          control={<Radio color="primary" />}
-                          label="Check-In"
-                        />
-                        <FormControlLabel
-                          value="check_out"
-                          control={<Radio color="primary" />}
-                          label="Check-Out"
-                        />
-                      </RadioGroup>
-                    </FormGroup>
-                  </div>
-                </div>
-              </CardHeader>
+                        <FormGroup row>
+                          <RadioGroup
+                            row
+                            aria-label="position"
+                            name="position"
+                            defaultValue="top"
+                            onChange={(e) => setSelectedValue(e.target.value)}
+                          >
+                            <FormControlLabel
+                              value="all"
+                              control={<Radio color="primary" />}
+                              label="All"
+                            />
+                            <FormControlLabel
+                              value="red_alert"
+                              control={<Radio color="primary" />}
+                              label="Red-Alert"
+                            />
+                            <FormControlLabel
+                              value="passed"
+                              control={<Radio color="primary" />}
+                              label="Passed"
+                            />
+                            <FormControlLabel
+                              value="rejected"
+                              control={<Radio color="primary" />}
+                              label="Rejected"
+                            />
+                            <FormControlLabel
+                              value="check_in"
+                              control={<Radio color="primary" />}
+                              label="Check-In"
+                            />
+                            <FormControlLabel
+                              value="check_out"
+                              control={<Radio color="primary" />}
+                              label="Check-Out"
+                            />
+                          </RadioGroup>
+                        </FormGroup>
+                      </div>
+                    </div>
+                  </CardHeader>
 
-              <div style={{ maxHeight: "450px", overflowY: "scroll" }}>
+                  <div style={{ maxHeight: "450px", overflowY: "scroll" }}>
+                    <CardBody>
+                      <Table
+                        tableHeaderColor="success"
+                        tableHead={[
+                          "ID",
+                          "Vehicle Number",
+                          "Pass/Rejected",
+                          "Image Url",
+                          "Date",
+                          "Check In/Out",
+                          "Red Alert",
+                          "Message",
+                          "Enter by",
+                        ]}
+                        tableData={data.map((item) => {
+                          return [
+                            item.id,
+                            item.number_plate,
+                            item.is_passed_or_rejected ? "Passed" : "Rejected",
+                            <>
+                              <a target="_blank" href={item.image}>
+                                {item.image}
+                              </a>
+                            </>,
+                            item.date,
+                            item.check_in_out[0].toUpperCase() +
+                              item.check_in_out.slice(1),
+                            item.red_alert ? "Yes" : "No",
+                            item.other_message,
+                            item.entry_by,
+                          ];
+                        })}
+                      />
+                    </CardBody>
+                  </div>
+                </Card>
+              </GridItem>
+            )}
+
+            {/* <GridItem xs={12} sm={12} md={6}>
+              <Card>
+                <CardHeader color="success">
+                  <h4 className={classes.cardTitleWhite}>Accepted Vehicles</h4>
+                  <p className={classes.cardCategoryWhite}>
+                    New employees on 15th September, 2016
+                  </p>
+                </CardHeader>
                 <CardBody>
                   <Table
-                    tableHeaderColor="primary"
-                    tableHead={[
-                      "ID",
-                      "Vehicle Number",
-                      "Pass/Rejected",
-                      "Image Url",
-                      "Date",
-                      "Check In/Out",
-                      "Red Alert",
-                      "Message",
-                      "Enter by",
+                    tableHeaderColor="success"
+                    tableHead={["ID", "Name", "Salary", "Country"]}
+                    tableData={[
+                      ["1", "Dakota Rice", "$36,738", "Niger"],
+                      ["2", "Minerva Hooper", "$23,789", "Curaçao"],
+                      ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
+                      ["4", "Philip Chaney", "$38,735", "Korea, South"],
                     ]}
-                    tableData={data.map((item) => {
-                      return [
-                        item.id,
-                        item.number_plate,
-                        item.is_passed_or_rejected ? "Yes" : "No",
-                        <>
-                          <a target="_blank" href={item.image}>
-                            {item.image}
-                          </a>
-                        </>,
-                        item.date,
-                        item.check_in_out[0].toUpperCase() +
-                          item.check_in_out.slice(1),
-                        item.red_alert ? "Yes" : "No",
-                        item.other_message,
-                        item.entry_by,
-                      ];
-                    })}
                   />
                 </CardBody>
-              </div>
-            </Card>
-          </GridItem>
-        )}
-
-        <GridItem xs={12} sm={12} md={6}>
-          <Card>
-            <CardHeader color="success">
-              <h4 className={classes.cardTitleWhite}>Accepted Vehicles</h4>
-              <p className={classes.cardCategoryWhite}>
-                New employees on 15th September, 2016
-              </p>
-            </CardHeader>
-            <CardBody>
-              <Table
-                tableHeaderColor="success"
-                tableHead={["ID", "Name", "Salary", "Country"]}
-                tableData={[
-                  ["1", "Dakota Rice", "$36,738", "Niger"],
-                  ["2", "Minerva Hooper", "$23,789", "Curaçao"],
-                  ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
-                  ["4", "Philip Chaney", "$38,735", "Korea, South"],
-                ]}
-              />
-            </CardBody>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={6}>
-          <Card>
-            <CardHeader color="warning">
-              <h4 className={classes.cardTitleWhite}>Rejected Vehicles</h4>
-              <p className={classes.cardCategoryWhite}>
-                New employees on 15th September, 2016
-              </p>
-            </CardHeader>
-            <CardBody>
-              <Table
-                tableHeaderColor="warning"
-                tableHead={["ID", "Name", "Salary", "Country"]}
-                tableData={[
-                  ["1", "Dakota Rice", "$36,738", "Niger"],
-                  ["2", "Minerva Hooper", "$23,789", "Curaçao"],
-                  ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
-                  ["4", "Philip Chaney", "$38,735", "Korea, South"],
-                ]}
-              />
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-    </div>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={6}>
+              <Card>
+                <CardHeader color="warning">
+                  <h4 className={classes.cardTitleWhite}>Rejected Vehicles</h4>
+                  <p className={classes.cardCategoryWhite}>
+                    New employees on 15th September, 2016
+                  </p>
+                </CardHeader>
+                <CardBody>
+                  <Table
+                    tableHeaderColor="warning"
+                    tableHead={["ID", "Name", "Salary", "Country"]}
+                    tableData={[
+                      ["1", "Dakota Rice", "$36,738", "Niger"],
+                      ["2", "Minerva Hooper", "$23,789", "Curaçao"],
+                      ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
+                      ["4", "Philip Chaney", "$38,735", "Korea, South"],
+                    ]}
+                  />
+                </CardBody>
+              </Card>
+            </GridItem>
+          */}
+          </GridContainer>
+        </div>
+      )}
+    </>
   );
 }

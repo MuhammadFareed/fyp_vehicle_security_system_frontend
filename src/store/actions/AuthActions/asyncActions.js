@@ -108,7 +108,8 @@ export const logInUser = async (data, setLoading, history) => {
     });
 };
 
-export const logOutUser = async () => {
+export const logOutUser = async (history) => {
   const { dispatch } = store;
   dispatch(loggedOut());
+  history.push('/login');
 };
