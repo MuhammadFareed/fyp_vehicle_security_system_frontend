@@ -59,6 +59,7 @@ export default function Dashboard() {
   const [selectedValue, setSelectedValue] = useState('all');
   const [newVehicle, setNewVehicle] = useState(null);
   const [data, setData] = useState(null);
+  const [dataFetched, setDataFetched] = useState(false);
   const [allData, setAllData] = useState(null);
   const [passed, setPassed] = useState(null);
   const [rejected, setRejected] = useState(null);
@@ -72,19 +73,29 @@ export default function Dashboard() {
       const response = await GetService("vehicles/search");
       setData(response.data);
       setAllData(response.data);
-      const response2 = await GetService("vehicles/search?status=passed");
-      setPassed(response2.data);
-      const response3 = await GetService("vehicles/search?status=rejected");
-      setRejected(response3.data);
-      const response4 = await GetService("vehicles/search?red_alert=true");
-      setRedAlert(response4.data);
-      const response5 = await GetService("vehicles/search?in_out=in");
-      setCheckIn(response5.data);
-      const response6 = await GetService("vehicles/search?in_out=out");
-      setCheckOut(response6.data);
+      setDataFetched(true)
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if(dataFetched) {
+      const getFilteredData = async () => {
+        const response2 = await GetService("vehicles/search?status=passed");
+        setPassed(response2.data);
+        const response3 = await GetService("vehicles/search?status=rejected");
+        setRejected(response3.data);
+        const response4 = await GetService("vehicles/search?red_alert=true");
+        setRedAlert(response4.data);
+        const response5 = await GetService("vehicles/search?in_out=in");
+        setCheckIn(response5.data);
+        const response6 = await GetService("vehicles/search?in_out=out");
+        setCheckOut(response6.data);
+        setDataFetched(false);
+      }
+      getFilteredData();
+    }
+  },[dataFetched])
 
   useEffect(() => {
     if(selectedValue==='red_alert') {

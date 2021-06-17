@@ -22,6 +22,7 @@ import Button from "components/CustomButtons/Button.js";
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 import { logOutUser } from "./../../store/actions/AuthActions/asyncActions";
 import { withRouter } from "react-router";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(styles);
 
@@ -210,6 +211,13 @@ function AdminNavbarLinks(props) {
                       Settings
                     </MenuItem>
                     <Divider light /> */}
+                    <a href="/signup">
+                    <MenuItem
+                      className={classes.dropdownItem}
+                    >
+                      Add new Admin
+                    </MenuItem>
+                    </a>
                     <MenuItem
                       onClick={() => logOutUser(props.history)}
                       className={classes.dropdownItem}

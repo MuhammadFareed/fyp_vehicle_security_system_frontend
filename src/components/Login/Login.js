@@ -57,9 +57,9 @@ function Login(props) {
             <input onClick={onSubmitHandler} type="submit" id="submission" />
             <br />
             <br />
-            <Link to="/signup" style={{ color: "white" }}>
+            {/* <Link to="/signup" style={{ color: "white" }}>
               Click to Register!!!
-            </Link>
+            </Link> */}
           </form>
         </div>
       )}

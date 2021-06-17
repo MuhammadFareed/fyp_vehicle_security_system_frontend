@@ -31,7 +31,7 @@ export default function App() {
             <Route path="/signup" component={Signup} />
             <Route path="/admin" component={Admin} />
             <Route path="/rtl" component={RTL} />
-            <Redirect from="/" to="/admin" />
+            {/* <Redirect from="/" to="/login" /> */}
           </>
       </Switch>
     </Router>

@@ -15,59 +15,48 @@ function error(errorMessage) {
   });
 }
 
-function success(successMessage, history, login) {
+function success(successMessage, history) {
+  debugger
   Modal.success({
     content: successMessage,
     onOk() {
-      if (login) {
-        history.push("/admin/dashboard");
-      } else {
-        history.push("/login");
-      }
+      history.push("/admin/dashboard");
     },
   });
 }
 
-export const signUpUser = async (data, setLoading, history, token) => {
+export const signUpUser = async (data, setLoading, history) => {
   const { dispatch } = store;
   dispatch(signupInitiated());
-  const header = {
-    headers: {
-      "content-type": "application/json",
-      Accept: "application/json",
-      Medium: "Web",
-      Authorization: `Token ${token}`,
-    },
+
+  let token = localStorage.getItem("token");
+  let headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    'Authorization': `Token ${token}`,
   };
-  PostService("actuarial/users/create/", data, header)
-    .then((response) => {
-      console.log(response);
-      debugger;
-      if (
-        response.status === parseInt(200) &&
-        response.data.data.status === "success"
-      ) {
-        dispatch(signupSuccess());
-        setLoading(false);
-        let login = false;
-        success(
-          "Account created successfully! You can login now.",
-          history,
-          login
-        );
-      } else {
-        debugger;
-        dispatch(signupFailed());
-        setLoading(false);
-        error(`Sign up failed! ${response.data}`);
+  try {
+    let response = await fetch(
+      "http://0a876a9047f2.ngrok.io/api/v1/actuarial/users/create/",
+      {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(data),
       }
-    })
-    .catch((err) => {
-      debugger;
-      dispatch(signupFailed());
+    );
+    console.log(response);
+    response = await response.json();
+    console.log(response);
+    if (response.status === 'success') {
+      success('Account created successfully!', history, false);
+    } else {
+      error("Signup Failed. Please try again!");
       setLoading(false);
-      error("Sign up failed! Something went wrong. Please try again!", err);
-    });
+    }
+  } catch (e) {
+    error("Signup Failed. Please try again!");
+    setLoading(false);
+  }
 };
 
 export const logInUser = async (data, setLoading, history) => {
@@ -91,8 +80,7 @@ export const logInUser = async (data, setLoading, history) => {
         console.log(token);
         localStorage.setItem("token", token);
         setLoading();
-        let login = true;
-        success("Logged In successfully!", history, login);
+        success("Logged In successfully!", history);
       } else {
         dispatch(loginFailed());
         setLoading();
@@ -111,5 +99,6 @@ export const logInUser = async (data, setLoading, history) => {
 export const logOutUser = async (history) => {
   const { dispatch } = store;
   dispatch(loggedOut());
-  history.push('/login');
+  localStorage.setItem('token', '');
+  history.push("/login");
 };

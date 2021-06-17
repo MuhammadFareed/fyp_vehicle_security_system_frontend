@@ -16,21 +16,6 @@ function Signup(props) {
   const [password, setPassword] = useState(null);
   const [phone, setPhone] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(null);
-
-  console.log("object");
-  const getToken = async () => {
-    try {
-      let token = localStorage.getItem("token");
-      setToken(token);
-    } catch (error) {
-      console.log(`error`, error);
-    }
-  };
-
-  useEffect(() => {
-    getToken();
-  }, []);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -38,19 +23,12 @@ function Signup(props) {
     let _data = {
       full_name: usrename,
       email: email,
-      password: role,
-      role: password,
+      password: password,
+      role: role,
       phone_no: phone,
     };
-    // let _data = {
-    //   full_name: "test",
-    //   email: "test7@test.com",
-    //   password: "123456",
-    //   role: "user",
-    //   phone_no: "03002582",
-    // };
 
-    signUpUser(_data, setLoading, props.history, token);
+    signUpUser(_data, setLoading, props.history);
   };
   return (
     <div className="signup">
@@ -123,9 +101,9 @@ function Signup(props) {
             <input onClick={onSubmitHandler} type="submit" id="submission" />
             <br />
             <br />
-            <Link to="/login" style={{ color: "white" }}>
+            {/* <Link to="/login" style={{ color: "white" }}>
               Click to Login!!!
-            </Link>
+            </Link> */}
           </form>
         </div>
       )}
